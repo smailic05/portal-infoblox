@@ -1,0 +1,30 @@
+
+version: latest
+docker:
+  registry: https://index.docker.io/v1/
+  username: "{ Fill this in }"
+  password: "{ Fill this in }"
+
+rbac:
+  enable: true
+
+#### Values that will be populated from env values
+env: "minikube"
+zone: "local"
+
+image:
+  pullPolicy: IfNotPresent
+
+
+
+app:
+  namespace: "portal-infoblox-{{ .Values.env }}"
+  httpPort: 8080
+  grpcPort: 9090
+
+internal:
+  enable: false
+  port: 8081
+
+secrets:
+  enabled: true

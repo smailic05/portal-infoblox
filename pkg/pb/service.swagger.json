@@ -1,0 +1,225 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "github.com/my-app/pkg/pb/service.proto",
+    "version": "version not set"
+  },
+  "paths": {
+    "/info/{service}": {
+      "get": {
+        "tags": [
+          "MyApp"
+        ],
+        "operationId": "MyAppMyApp_GetDescription",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "int64",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/myappGetDescriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        }
+      }
+    },
+    "/requests/{service}": {
+      "get": {
+        "tags": [
+          "MyApp"
+        ],
+        "operationId": "MyAppMyApp_GetRequests",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "int64",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/myappGetRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        }
+      }
+    },
+    "/update": {
+      "post": {
+        "tags": [
+          "MyApp"
+        ],
+        "operationId": "MyAppMyApp_UpdateDescription",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/myappUpdateDescriptionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/myappUpdateDescriptionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        }
+      }
+    },
+    "/uptime/{service}": {
+      "get": {
+        "tags": [
+          "MyApp"
+        ],
+        "operationId": "MyAppMyApp_GetUptime",
+        "parameters": [
+          {
+            "type": "string",
+            "format": "int64",
+            "name": "service",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/myappGetUptimeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        }
+      }
+    },
+    "/version": {
+      "get": {
+        "tags": [
+          "MyApp"
+        ],
+        "operationId": "MyAppMyApp_GetVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/myappVersionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "myappGetDescriptionResponse": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "myappGetRequestsResponse": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "myappGetUptimeResponse": {
+      "type": "object",
+      "properties": {
+        "uptime": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "myappUpdateDescriptionRequest": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "service": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "myappUpdateDescriptionResponse": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "myappVersionResponse": {
+      "description": "TODO: Structure your own protobuf messages. Each protocol buffer message is a \nsmall logical record of information, containing a series of name-value pairs.",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "rpcStatus": {}
+  },
+  "tags": [
+    {
+      "name": "MyApp"
+    }
+  ]
+}

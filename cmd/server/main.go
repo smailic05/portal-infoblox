@@ -1,18 +1,25 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"strings"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"github.com/sirupsen/logrus"
+	"github.com/smailic05/portal-infoblox/pkg/pb"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/reflect/protoreflect"
+
+	"github.com/infobloxopen/atlas-app-toolkit/gateway"
 	"github.com/infobloxopen/atlas-app-toolkit/server"
 
 	"github.com/infobloxopen/atlas-app-toolkit/gorm/resource"
@@ -50,7 +57,6 @@ func NewLogger() *logrus.Logger {
 
 // ServeInternal builds and runs the server that listens on InternalAddress
 func ServeInternal(logger *logrus.Logger) error {
-
 	s, err := server.NewServer(
 		// register metrics
 		server.WithHandler("/metrics", promhttp.Handler()),
@@ -69,7 +75,6 @@ func ServeInternal(logger *logrus.Logger) error {
 
 // ServeExternal builds and runs the server that listens on ServerAddress and GatewayAddress
 func ServeExternal(logger *logrus.Logger) error {
-
 	grpcServer, err := NewGRPCServer(logger)
 	if err != nil {
 		logger.Fatalln(err)
@@ -78,6 +83,21 @@ func ServeExternal(logger *logrus.Logger) error {
 
 	s, err := server.NewServer(
 		server.WithGrpcServer(grpcServer),
+		server.WithGateway(
+			gateway.WithGatewayOptions(
+				runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+					MarshalOptions: protojson.MarshalOptions{
+						UseProtoNames:   true,
+						EmitUnpopulated: false,
+					},
+				}),
+				runtime.WithForwardResponseOption(forwardResponseOption),
+				runtime.WithIncomingHeaderMatcher(gateway.AtlasDefaultHeaderMatcher()),
+			),
+			gateway.WithServerAddress(fmt.Sprintf("%s:%s", viper.GetString("server.address"), viper.GetString("server.port"))),
+			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterMyAppHandlerFromEndpoint),
+		),
+		server.WithHandler("/swagger/", NewSwaggerHandler(viper.GetString("gateway.swaggerFile"))),
 	)
 	if err != nil {
 		logger.Fatalln(err)
@@ -88,14 +108,23 @@ func ServeExternal(logger *logrus.Logger) error {
 		logger.Fatalln(err)
 	}
 
-	logger.Printf("serving gRPC at %s:%s", viper.GetString("server.address"), viper.GetString("server.port"))
+	httpL, err := net.Listen("tcp", fmt.Sprintf("%s:%s", viper.GetString("gateway.address"), viper.GetString("gateway.port")))
+	if err != nil {
+		logger.Fatalln(err)
+	}
 
-	return s.Serve(grpcL, nil)
+	logger.Printf("serving gRPC at %s:%s", viper.GetString("server.address"), viper.GetString("server.port"))
+	logger.Printf("serving http at %s:%s", viper.GetString("gateway.address"), viper.GetString("gateway.port"))
+
+	return s.Serve(grpcL, httpL)
 }
 
 func init() {
 	pflag.Parse()
-	viper.BindPFlags(pflag.CommandLine)
+	err := viper.BindPFlags(pflag.CommandLine)
+	if err != nil {
+		log.Fatal("Bind flags error")
+	}
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AddConfigPath(viper.GetString("config.source"))
@@ -110,4 +139,9 @@ func init() {
 	}
 	resource.RegisterApplication(viper.GetString("app.id"))
 	resource.SetPlural()
+}
+
+func forwardResponseOption(ctx context.Context, w http.ResponseWriter, resp protoreflect.ProtoMessage) error {
+	w.Header().Set("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate")
+	return nil
 }

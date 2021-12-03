@@ -6,14 +6,15 @@ const (
 	// configuration defaults support local development (i.e. "go run ...")
 
 	// Server
-	defaultServerAddress = "0.0.0.0"
-	defaultServerPort    = "9090"
+	defaultServerAddress     = "0.0.0.0"
+	defaultServerPort        = "9090"
+	defaultServerAddressPort = "localhost:9091"
 
 	// Gateway
-	defaultGatewayEnable      = false
+	defaultGatewayEnable      = true
 	defaultGatewayAddress     = "0.0.0.0"
 	defaultGatewayPort        = "8080"
-	defaultGatewayURL         = "/portal-infoblox/v1/"
+	defaultGatewayURL         = "/my-app/v1/"
 	defaultGatewaySwaggerFile = "pkg/pb/service.swagger.json"
 
 	// Database
@@ -23,7 +24,7 @@ const (
 	defaultDatabaseType     = "postgres"
 	defaultDatabaseAddress  = "0.0.0.0"
 	defaultDatabasePort     = "5432"
-	defaultDatabaseName     = "portal_infoblox"
+	defaultDatabaseName     = "my_app"
 	defaultDatabaseUser     = "postgres"
 	defaultDatabasePassword = "postgres"
 	defaultDatabaseSSL      = "disable"
@@ -55,14 +56,14 @@ const (
 	// Health
 	defaultInternalEnable    = true
 	defaultInternalAddress   = "0.0.0.0"
-	defaultInternalPort      = "8081"
+	defaultInternalPort      = "8082"
 	defaultInternalHealth    = "/healthz"
 	defaultInternalReadiness = "/ready"
 
 	defaultConfigDirectory = "deploy/"
 	defaultConfigFile      = ""
 	defaultSecretFile      = ""
-	defaultApplicationID   = "portal-infoblox"
+	defaultApplicationID   = "portal"
 
 	// Heartbeat
 	defaultKeepaliveTime    = 10
@@ -74,6 +75,9 @@ const (
 
 var (
 	// define flag overrides
+
+	serverAddr = pflag.String("server.address.full", defaultServerAddressPort, "The server address in the format of host:port")
+
 	flagServerAddress = pflag.String("server.address", defaultServerAddress, "adress of gRPC server")
 	flagServerPort    = pflag.String("server.port", defaultServerPort, "port of gRPC server")
 

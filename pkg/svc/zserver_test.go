@@ -29,6 +29,11 @@ func TestGetVersion(t *testing.T) {
 				)
 			}
 			res, err := server.GetVersion(context.Background(), &empty.Empty{})
+			if err != nil {
+				t.Errorf("Unexpected error: %v - expected: no error",
+					err,
+				)
+			}
 			if res.Version != test.expected.Version {
 				t.Errorf("Unexpected version in response: %v - expected: %v",
 					res.Version, test.expected.Version,

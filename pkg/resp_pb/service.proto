@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package myapp;
+package myresponder;
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/my-app/pkg/pb;pb";
 
+option go_package = "github.com/my-responder/pkg/rpb;rpb";
 
 message VersionResponse {
   string version = 1;
@@ -53,7 +53,7 @@ message GetModeResponse {
 }
 
 message SetModeRequest {
-  int64 mode = 1;
+  int64 mode = 2;
 }
 
 message SetModeResponse {
@@ -67,58 +67,37 @@ message RestartRequest {
 message RestartResponse {
 }
 
-// TODO: Define the MyApp service and its methods. Feel free
-// to change the name of MyApp to better-suit your naming
+// TODO: Define the MyResponder service and its methods. Feel free
+// to change the name of MyResponder to better-suit your naming
 // conventions.
-service MyApp {
+service MyResponder {
   rpc GetVersion (google.protobuf.Empty) returns (VersionResponse) {
-    // TODO: Provide mappings between REST endpoints and service methods.
-    option (google.api.http) = {
-      get: "/version"
-    };
+    
   }
-
   rpc UpdateDescription (UpdateDescriptionRequest) returns (UpdateDescriptionResponse){
-    option (google.api.http) = {
-        post: "/update"
-        body: "*"
-    };
+
   }
 
   rpc GetDescription (GetDescriptionRequest) returns (GetDescriptionResponse){
-    option (google.api.http) = {
-        get: "/info/{service}"
-    };
+
   }
 
   rpc GetUptime (GetUptimeRequest) returns (GetUptimeResponse){
-    option (google.api.http) = {
-        get: "/uptime/{service}"
-    };
+
   }
 
   rpc GetRequests (GetRequestsRequest) returns (GetRequestsResponse){
-    option (google.api.http) = {
-        get: "/requests/{service}"
-    };
-  }
 
+  }
   rpc GetMode (GetModeRequest) returns (GetModeResponse){
-    option (google.api.http) = {
-        get: "/mode"
-    };
+
   }
 
   rpc SetMode (SetModeRequest) returns (SetModeResponse){
-    option (google.api.http) = {
-        patch: "/mode"
-        body: "*"
-    };
+
   }
 
   rpc Restart (RestartRequest) returns (RestartResponse){
-    option (google.api.http) = {
-        get: "/restart/{service}"
-    };
+
   }
 }

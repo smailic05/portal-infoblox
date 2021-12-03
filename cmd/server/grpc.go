@@ -51,7 +51,7 @@ func NewGRPCServer(logger *logrus.Logger) (*grpc.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	pb.RegisterPortalInfobloxServer(grpcServer, s)
+	pb.RegisterMyAppServer(grpcServer, s)
 	// Register reflection service on gRPC server.
 	reflection.Register(grpcServer)
 
